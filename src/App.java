@@ -3,6 +3,8 @@ public class App {
     public static final String ROJO = "\u001B[31m";
     public static final String VERDE = "\u001B[32m";
     public static final String AMARILLO = "\u001B[33m";
+    public static final String RESET = "\033[0m";
+
     public static void main(String[] args) throws Exception {
         try {
             System.out.printf(
@@ -26,21 +28,30 @@ public class App {
 
             String estado = calif >= 50 ? "APROBADO" : "SUSPENSO";
 
-            System.out.print("Asignatura (Matemáticas, Programación, Historia)");
+            System.out.print("Asignatura (Matemáticas, Programación, Historia): ");
             String asig = System.console().readLine();
 
             System.out.print("¿Es evaluación final? (s/n): ");
             String evalFin = System.console().readLine();
 
-
+            System.out.println(RESET);
             System.out.printf(
             """
             RESULTADOS DEL ANÁLISIS
             =======================
-            Estudiante: %-36s Asignatura: %s
-            Calificación numérica: %-36d/100 Calificación cualitativa: %s
-            Estado: %-36s 
-            """, nombre, asig, calif, cualitativa, estado
+            Estudiante: %-25s Asignatura: %s
+            Calificación numérica: %d%-12s Calificación cualitativa: %s%s%s
+            Estado: %s%-25s%s 
+            """, 
+            nombre, asig, calif, "/100",
+            switch (cualitativa) {
+                case "Suspenso" -> ROJO;
+                case "Suficiente", "Bien" -> AMARILLO;
+                case "Notable", "Sobresaliente" -> VERDE;
+                default -> "";
+            }, cualitativa, RESET, 
+            estado == "APROBADO" ? VERDE : ROJO,
+            estado, RESET
             );
 
         } catch (NumberFormatException e) {
@@ -50,6 +61,5 @@ public class App {
             System.out.println("Unexpected error");
             return;
         }
-
     }
 }
